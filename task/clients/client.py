@@ -10,6 +10,10 @@ class DialClient(BaseClient):
 
     def __init__(self, deployment_name: str):
         super().__init__(deployment_name)
+        #TODO:
+        # Documentation: https://pypi.org/project/aidial-client/ (here you can find how to create and use these clients)
+        # 1. Create Dial client
+        # 2. Create AsyncDial client
 
         self.dial_client = Dial(api_key=self._api_key, base_url=DIAL_ENDPOINT)
 
@@ -58,10 +62,12 @@ class DialClient(BaseClient):
 
         contents = []
 
-        for chunk in completion:
+        async for chunk in completion:
             if choices := chunk.choices:
                 if len(choices) > 0:
                     if content := choices[0].delta.content:
+                        print(content)
                         contents.append(content)
+        print()
 
         return Message(role=Role.AI, content=' '.join(contents))

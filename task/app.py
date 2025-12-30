@@ -1,6 +1,7 @@
 import asyncio
 
 from task.clients.client import DialClient
+from task.clients.custom_client import DialClient as CustomDialClient
 from task.constants import DEFAULT_SYSTEM_PROMPT
 from task.models.conversation import Conversation
 from task.models.message import Message
@@ -25,6 +26,10 @@ async def start(stream: bool) -> None:
     # 8. Add generated message to history
     # 9. Test it with DialClient and CustomDialClient
     # 10. In CustomDialClient add print of whole request and response to see what you send and what you get in response
+    deployment_name = ""
+    dial_client = DialClient(deployment_name)
+    custom_dial_client = CustomDialClient(deployment_name)
+
     raise NotImplementedError
 
 
