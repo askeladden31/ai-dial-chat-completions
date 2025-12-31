@@ -29,8 +29,20 @@ async def start(stream: bool) -> None:
     deployment_name = ""
     dial_client = DialClient(deployment_name)
     custom_dial_client = CustomDialClient(deployment_name)
+    conversation = Conversation()
+    conversation.add_message(Message(Role.SYSTEM, DEFAULT_SYSTEM_PROMPT))
 
-    raise NotImplementedError
+    while True:
+        user_message = input("> ")
+        if user_message == 'exit':
+            break
+        conversation.add_message(Message(Role.USER, user_message))
+
+        if stream:
+            generated_message = await dial_client.stream_completion(conversation.get_messages())
+        else:
+            generated_message = dial_client.get_completion(conversation.get_messages())
+        conversation.add_message(generated_message)
 
 
 asyncio.run(
