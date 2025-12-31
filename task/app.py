@@ -26,11 +26,17 @@ async def start(stream: bool) -> None:
     # 8. Add generated message to history
     # 9. Test it with DialClient and CustomDialClient
     # 10. In CustomDialClient add print of whole request and response to see what you send and what you get in response
+
     deployment_name = "gpt-4o"
     dial_client = DialClient(deployment_name)
     custom_dial_client = CustomDialClient(deployment_name)
     conversation = Conversation()
-    conversation.add_message(Message(Role.SYSTEM, DEFAULT_SYSTEM_PROMPT))
+
+    print("Provide System prompt or press 'enter' to continue.")
+    if prompt := input("> "):
+        conversation.add_message(Message(Role.SYSTEM, prompt))
+    else:
+        conversation.add_message(Message(Role.SYSTEM, DEFAULT_SYSTEM_PROMPT))
 
     while True:
         user_message = input("> ")
