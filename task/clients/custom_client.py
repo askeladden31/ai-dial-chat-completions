@@ -82,11 +82,16 @@ class DialClient(BaseClient):
                     line = chunk.decode('utf-8').strip()
                     payload = line[6:].strip()
                     if payload != "[DONE]":
-                        self._g
+                        content = self._get_content_snippet(payload)
+                        print(content)
+                        contents.append(content)
 
-        raise NotImplementedError
+        return Message(role=Role.AI, content=' '.join(contents))
 
     def _get_content_snippet(self, data: str):
         json_data = json.loads(data)
         if choices := json_data.choices:
-            delta = choices[0]["delta"]
+            if len(choices) > 0:
+                if content := choices[0].delta.content:
+                    return content
+        return ''
