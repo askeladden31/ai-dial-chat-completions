@@ -26,7 +26,7 @@ async def start(stream: bool) -> None:
     # 8. Add generated message to history
     # 9. Test it with DialClient and CustomDialClient
     # 10. In CustomDialClient add print of whole request and response to see what you send and what you get in response
-    deployment_name = ""
+    deployment_name = "gpt-4o"
     dial_client = DialClient(deployment_name)
     custom_dial_client = CustomDialClient(deployment_name)
     conversation = Conversation()
@@ -40,8 +40,10 @@ async def start(stream: bool) -> None:
 
         if stream:
             generated_message = await dial_client.stream_completion(conversation.get_messages())
+            # generated_message = await custom_dial_client.stream_completion(conversation.get_messages())
         else:
             generated_message = dial_client.get_completion(conversation.get_messages())
+            # generated_message = custom_dial_client.get_completion(conversation.get_messages())
         conversation.add_message(generated_message)
 
 

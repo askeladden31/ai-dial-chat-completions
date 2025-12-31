@@ -43,9 +43,16 @@ class DialClient(BaseClient):
         if response.status_code != 200:
             raise Exception(f"HTTP {response.status_code}: {response.text}")
 
-        content = response.content
-        print(content)
-        return Message(role=Role.AI, content=content)
+        content = json.loads(response.content)
+
+        if choices := content["choices"]:
+            if len(choices) > 0:
+                if message := choices[0]["message"]:
+                    if content := message["content"]:
+                        print(content)
+                        return Message(role=Role.AI, content=content)
+
+        raise Exception("No choices in response found")
 
     async def stream_completion(self, messages: list[Message]) -> Message:
         #TODO:
@@ -83,15 +90,18 @@ class DialClient(BaseClient):
                     payload = line[6:].strip()
                     if payload != "[DONE]":
                         content = self._get_content_snippet(payload)
-                        print(content)
+                        print(content, end='')
                         contents.append(content)
+        print()
 
-        return Message(role=Role.AI, content=' '.join(contents))
+        return Message(role=Role.AI, content=''.join(contents))
 
     def _get_content_snippet(self, data: str):
-        json_data = json.loads(data)
-        if choices := json_data.choices:
-            if len(choices) > 0:
-                if content := choices[0].delta.content:
-                    return content
+        if data:
+            json_data = json.loads(data)
+            if choices := json_data["choices"]:
+                if len(choices) > 0:
+                    if delta := choices[0]["delta"]:
+                        if content := delta["content"]:
+                            return content
         return ''
